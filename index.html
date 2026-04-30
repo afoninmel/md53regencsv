@@ -358,8 +358,11 @@
         return;
       }
 
-      buildResultTable(beekaiHeaders, missingRows);
-      summary.innerHTML = `<span class="badge">Shared columns used for comparison: ${sharedHeaders.length}</span> <span class="badge">Missing rows: ${missingRows.length}</span>`;
+      const compareFields = sharedHeaders.filter(name => name !== 'created_at').slice(0, 3);
+      const displayHeaders = ['created_at', ...compareFields];
+
+      buildResultTable(displayHeaders, missingRows);
+      summary.innerHTML = `<span class="badge">Displayed columns: ${displayHeaders.length}</span> <span class="badge">Missing rows: ${missingRows.length}</span>`;
       summary.style.display = 'flex';
       postPanel.style.display = 'block';
       tableWrap.style.display = 'block';
@@ -387,10 +390,7 @@
       updateSendButtonState();
       postStatusText.style.display = 'none';
 
-      const showFormattedCreatedAt = headers.includes('created_at');
       const headerCells = [...headers];
-      if (showFormattedCreatedAt) headerCells.push('created_at (formatted)');
-
       const thead = document.createElement('thead');
       const headerRow = document.createElement('tr');
       headerCells.forEach(name => {
@@ -406,14 +406,9 @@
         tr.addEventListener('click', () => selectRow(index, row, tr));
         headers.forEach(name => {
           const td = document.createElement('td');
-          td.textContent = normalize(row[name]);
+          td.textContent = name === 'created_at' ? formatCreatedAt(row[name]) : normalize(row[name]);
           tr.appendChild(td);
         });
-        if (showFormattedCreatedAt) {
-          const td = document.createElement('td');
-          td.textContent = formatCreatedAt(row.created_at);
-          tr.appendChild(td);
-        }
         tbody.appendChild(tr);
       });
 
