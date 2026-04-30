@@ -276,6 +276,7 @@
     let selectedRow = null;
     let selectedRowElement = null;
     let displayedRows = [];
+    let displayHeaders = [];
 
     beekaiInput.addEventListener('change', updateButtonState);
     powerInput.addEventListener('change', updateButtonState);
@@ -292,6 +293,8 @@
       selectedRow = null;
       selectedRowElement = null;
       displayedRows = [];
+      sortColumn = null;
+      sortDirection = 'asc';
 
       Promise.all([parseCsvFile(beekaiInput.files[0]), parseCsvFile(powerInput.files[0])])
         .then(([beekai, power]) => {
@@ -380,7 +383,7 @@
       }
 
       const compareFields = sharedHeaders.filter(name => name !== 'created_at').slice(0, 3);
-      const displayHeaders = ['created_at', ...compareFields];
+      displayHeaders = ['created_at', ...compareFields];
 
       buildResultTable(displayHeaders, missingRows);
       summary.innerHTML = `<span class="badge">Displayed columns: ${displayHeaders.length}</span> <span class="badge">Missing rows: ${missingRows.length}</span>`;
@@ -469,7 +472,7 @@
         sortColumn = column;
         sortDirection = 'asc';
       }
-      buildResultTable(displayedRows, displayedRows); // Rebuild with current rows
+      buildResultTable(displayHeaders, displayedRows);
     }
 
     function selectRow(index, row, tr) {
