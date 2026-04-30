@@ -215,8 +215,8 @@
 </head>
 <body>
   <div class="app">
-    <h1>CSV Comparator</h1>
-    <p class="lead">Upload your Beekai CSV and Power Automate CSV. The page compares shared columns and shows rows from the Beekai file that do not appear in the Power Automate file. Everything stays in the browser and reload clears all data.</p>
+    <h1>CSV Vergleich</h1>
+    <p class="lead">Lade die Beekai CSV und die Power Automate CSV hoch. Die Seite vergleicht die beiden und zeigt die Beekai Einträge an, die nicht in der PA CSV vorhanden sind. </p>
 
     <div class="upload-grid">
       <div class="upload-box">
@@ -230,7 +230,7 @@
     </div>
 
     <div class="actions">
-      <button id="compareButton" disabled>Compare files</button>
+      <button id="compareButton" disabled>Vergleichen</button>
       <span id="statusText" class="message" style="display:none"></span>
     </div>
 
@@ -238,7 +238,7 @@
 
     <div class="post-panel" id="postPanel" style="display:none">
       <div class="row-selection">
-        <span id="selectedRowLabel">No row selected.</span>
+        <span id="selectedRowLabel">Kein Eintrag ausgewählt</span>
         <button id="sendButton" disabled>Send selected row</button>
       </div>
       <div>
@@ -246,14 +246,14 @@
         <input id="endpointInput" type="text" placeholder="https://example.com/webhook" />
       </div>
       <div id="postStatusText" class="post-status"></div>
-      <div class="note">When the row is selected, the app sends the row data as JSON via HTTP POST to the address you enter. The target endpoint must accept CORS requests from this static page.</div>
+      <div class="note">Wenn ein Eintrag ausgewählt ist, schickt diese Seite die Daten als JSON via HTTP POST zur Zieladresse. Die Zieladresse muss CORS-Anfragen annehmen.</div>
     </div>
 
     <div class="table-wrap" id="tableWrap" style="display:none">
       <table id="resultTable"></table>
     </div>
 
-    <p class="note">Pro tip: If you want to compare by a specific shared column, first open the files in a spreadsheet and verify the common column names. This tool uses all columns present in both CSV files to identify matching rows.</p>
+    <p class="note">Vergleich basiert auf mindestens 2 übereinstimmenden Spalten in den beiden CSVs.</p>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -341,17 +341,38 @@
       const powerHeaders = powerData.headers || [];
       const sharedHeaders = beekaiHeaders.filter(header => powerHeaders.includes(header));
 
-      if (!sharedHeaders.length) {
-        showMessage('No shared columns found between the two CSV files. The comparison requires at least one common column.', true);
+      if (sharedHeaders.length < 2) {
+        showMessage('At least 2 shared columns are required for comparison.', true);
         return;
       }
 
-      const makeKey = row => sharedHeaders.map(name => normalize(row[name])).join('|~|');
-      const powerKeys = new Set(powerData.rows.map(makeKey));
-      const missingRows = beekaiData.rows.filter(row => !powerKeys.has(makeKey(row)));
+      // Function to check if two rows match on at least 2 shared columns
+      function rowsMatch(rowA, rowB) {
+        let matchCount = 0;
+        for (const col of sharedHeaders) {
+          if (normalize(rowA[col]) === normalize(rowB[col])) {
+            matchCount++;
+            if (matchCount >= 2) return true;
+          }
+        }
+        return false;
+      }
+
+      // Check for each beekai row if it matches any power row
+      const matchedIndices = new Set();
+      beekaiData.rows.forEach((beekaiRow, beekaiIndex) => {
+        for (const powerRow of powerData.rows) {
+          if (rowsMatch(beekaiRow, powerRow)) {
+            matchedIndices.add(beekaiIndex);
+            break;
+          }
+        }
+      });
+
+      const missingRows = beekaiData.rows.filter((row, index) => !matchedIndices.has(index));
 
       if (missingRows.length === 0) {
-        showMessage('All rows from the Beekai CSV are present in the Power Automate CSV for the shared columns.', false);
+        showMessage('All rows from the Beekai CSV match rows in the Power Automate CSV based on at least 2 shared columns.', false);
         summary.innerHTML = `<span class="badge">Shared columns: ${sharedHeaders.length}</span> <span class="badge">Matched rows: ${beekaiData.rows.length - missingRows.length}</span>`;
         summary.style.display = 'flex';
         postPanel.style.display = 'none';
@@ -382,6 +403,9 @@
       });
     }
 
+    let sortColumn = null;
+    let sortDirection = 'asc'; // 'asc' or 'desc'
+
     function buildResultTable(headers, rows) {
       displayedRows = rows;
       selectedRow = null;
@@ -390,12 +414,33 @@
       updateSendButtonState();
       postStatusText.style.display = 'none';
 
+      // Sort rows if a column is selected
+      if (sortColumn) {
+        rows = [...rows].sort((a, b) => {
+          let valA, valB;
+          if (sortColumn === 'created_at') {
+            valA = new Date(a.created_at).getTime();
+            valB = new Date(b.created_at).getTime();
+          } else {
+            valA = normalize(a[sortColumn]);
+            valB = normalize(b[sortColumn]);
+          }
+          if (sortDirection === 'asc') {
+            return valA > valB ? 1 : valA < valB ? -1 : 0;
+          } else {
+            return valA < valB ? 1 : valA > valB ? -1 : 0;
+          }
+        });
+      }
+
       const headerCells = [...headers];
       const thead = document.createElement('thead');
       const headerRow = document.createElement('tr');
       headerCells.forEach(name => {
         const th = document.createElement('th');
         th.textContent = name;
+        th.style.cursor = 'pointer';
+        th.addEventListener('click', () => sortByColumn(name));
         headerRow.appendChild(th);
       });
       thead.appendChild(headerRow);
@@ -415,6 +460,16 @@
       resultTable.innerHTML = '';
       resultTable.appendChild(thead);
       resultTable.appendChild(tbody);
+    }
+
+    function sortByColumn(column) {
+      if (sortColumn === column) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortColumn = column;
+        sortDirection = 'asc';
+      }
+      buildResultTable(displayedRows, displayedRows); // Rebuild with current rows
     }
 
     function selectRow(index, row, tr) {

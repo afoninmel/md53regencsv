@@ -6,8 +6,8 @@ This repository contains a static browser-based CSV comparison page that can be 
 
 1. Open `index.html` in a browser.
 2. Upload the Beekai CSV and the Power Automate CSV.
-3. Click **Compare files**.
-4. The page shows rows from the Beekai CSV that do not appear in the Power Automate CSV by comparing shared columns.
+3. Click **Vergleichen**.
+4. The page shows rows from the Beekai CSV that do not match any row in the Power Automate CSV based on at least 2 shared columns having the same values.
 
 > All processing happens in the browser. No files are uploaded to a server, and reloading the page clears all data.
 
