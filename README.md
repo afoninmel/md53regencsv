@@ -19,6 +19,12 @@ The URL will be:
 
 `https://afoninmel.github.io/md53regencsv/`
 
+If you still see the README page after deployment, make sure the latest `index.html` and `.nojekyll` are committed and pushed to `main`, then wait a few minutes for GitHub Pages to rebuild.
+
+The URL will be:
+
+`https://afoninmel.github.io/md53regencsv/`
+
 ## POST Request Support
 
 After you compare files and missing rows appear, select one row in the results table. Enter a destination URL and click **Send selected row**. The page sends the selected row as JSON via HTTP POST from the browser.
