@@ -509,13 +509,14 @@
     });
 
     function buildPostPayload(row) {
-      const values = Object.keys(row).map(key => {
-        const cleanKey = key.startsWith('data.') ? key.slice(5) : key;
-        return {
-          name: cleanKey,
-          value: normalize(row[key]),
-        };
-      });
+      const values = Object.keys(row)
+        .map(key => {
+          const cleanKey = key.startsWith('data.') ? key.slice(5) : key;
+          return {
+            name: cleanKey,
+            value: normalize(row[key]),
+          };
+        });
 
       return {
         version: '1.0',
