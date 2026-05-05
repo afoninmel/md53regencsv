@@ -1,0 +1,423 @@
+{
+    "headers": {
+        "Accept": "application/json,text/plain,*/*",
+        "Accept-Encoding": "gzip,deflate",
+        "Host": "prod-219.westeurope.logic.azure.com",
+        "Max-Forwards": "10",
+        "User-Agent": "axios/1.4.0",
+        "baggage": "sentry-environment=vercel-production,sentry-release=00091ea1f7daa16abbd43d2b91576f7d48fbe58e,sentry-public_key=bb2817b29c2142b5b6fdde0c62120abb,sentry-trace_id=a8eed6e7c8cd4043b5f68703978f1f0d,sentry-sample_rate=1,sentry-transaction=POST%20%2Fapi%2Fv1%2Fwebhook%2Fsend,sentry-sampled=true",
+        "beekai-signature": "t=1777982848710,s=34fe9e6317cb6ef6235cac4fbcc75ce113e222f980e25c5dc9e75213de68cc5e",
+        "cdn-loop": "cloudflare; loops=1",
+        "cf-connecting-ip": "100.31.236.234",
+        "cf-ipcountry": "US",
+        "cf-ray": "9f6fa0049e59d600-IAD",
+        "cf-visitor": "{\"scheme\":\"https\"}",
+        "render-proxy-ttl": "4",
+        "rndr-id": "165e78ab-fcc1-4d71",
+        "sentry-trace": "a8eed6e7c8cd4043b5f68703978f1f0d-b4ce7b100ae256bd-1",
+        "true-client-ip": "100.31.236.234",
+        "x-invocation-id": "fra1::5tftd-1777982847256-2bd730cd3cea",
+        "x-request-start": "1777982849001126",
+        "x-vercel-id": "fra1::5tftd-1777982847256-2bd730cd3cea",
+        "x-ms-forwarded-for-candidate": "100.31.236.234, 104.23.209.131",
+        "X-Original-Proto": "https",
+        "x-ms-origin-endpoint": "ppapigw.eu-il101.gateway.prod.island.powerapps.com",
+        "X-Original-Host": "10.0.29.5:20004",
+        "x-ms-igw-external-uri": "https://defaultaab93a66542c49b6832ffba66957d6.82.environment.api.powerplatform.com/powerautomate/automations/direct/workflows/316afaec531b427c96dfad1ec17bc115/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=PpsvTcDROtIyc5h_4lB4pXa2LCKV-sQKVV15bB5Z9w0",
+        "x-ms-gw-trace-id": "ec7ac80c-ee50-4d56-ae39-9787aad83f10",
+        "x-ms-igw-raw-target": "/powerautomate/automations/direct/workflows/316afaec531b427c96dfad1ec17bc115/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=PpsvTcDROtIyc5h_4lB4pXa2LCKV-sQKVV15bB5Z9w0",
+        "x-ms-correlation-id": "b05995b0-5bc7-4f6e-8379-16b32e4d9f6a",
+        "x-ms-coreframework-caller-activity-id": "6357d1c4-b72c-4c16-81ad-ac033538f24f",
+        "X-Original-For": "[::ffff:10.0.29.8]:61782",
+        "x-ms-ppapi-forwarded-path": "/powerautomate/automations/direct/workflows/316afaec531b427c96dfad1ec17bc115/triggers/manual/paths/invoke",
+        "x-ms-ppapi-forwarded-api-version": "1",
+        "x-ms-gateway-clusters": "prdil101weu",
+        "X-Forwarded-Prefix": "/096071f0-f06f-4926-a384-97a4aa589b97/134220594446479328",
+        "x-ms-activity-vector": "00.00.IN.0B",
+        "X-ARR-LOG-ID": "7862601d-37f0-4f8a-9858-77db7724395b",
+        "CLIENT-IP": "40.113.178.233:1566",
+        "DISGUISED-HOST": "prod-219.westeurope.logic.azure.com",
+        "X-SITE-DEPLOYMENT-ID": "flowfe-prod-am-rp00-app-01",
+        "WAS-DEFAULT-HOSTNAME": "flowfe-prod-am-rp00-app-01.flow-prod-am-rp00-ase-01.p.azurewebsites.net",
+        "X-Forwarded-Proto": "https",
+        "X-AppService-Proto": "https",
+        "X-ARR-SSL": "2048|256|CN=Microsoft TLS G2 RSA CA OCSP 02, O=Microsoft Corporation, C=US|CN=westeurope.logic.azure.com, O=Microsoft Corporation, L=Redmond, S=WA, C=US",
+        "X-Forwarded-TlsVersion": "1.3",
+        "X-Forwarded-For": "40.113.178.233:1566",
+        "X-Original-URL": "/workflows/316afaec531b427c96dfad1ec17bc115/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2ftriggers%2fmanual%2frun&sv=1.0&sig=JDKa3QypBq-3JorCSgfzYhx-OsPSr6xCqVsr1WY2i5c",
+        "X-WAWS-Unencoded-URL": "/workflows/316afaec531b427c96dfad1ec17bc115/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2ftriggers%2fmanual%2frun&sv=1.0&sig=JDKa3QypBq-3JorCSgfzYhx-OsPSr6xCqVsr1WY2i5c",
+        "X-Azure-JA4-Fingerprint": "t13d101100_01be160bb49b_36bf25f296df",
+        "Content-Length": "4151",
+        "Content-Type": "application/json"
+    },
+    "body": {
+        "version": "1.0",
+        "event_type": "form_submitted",
+        "form_response": {
+            "form_id": "3c4dbf67-a4f2-4d48-9c43-b039dce3de65",
+            "session_id": "2627bd32-3db9-45fa-9cb6-42246bacb237",
+            "submitted_at": "2026-05-05T12:07:28.709Z",
+            "definition": {
+                "title": "v2: RegenerationMELADem53(C)",
+                "fields": [
+                    {
+                        "type": "RichText"
+                    },
+                    {
+                        "type": "Markdown"
+                    },
+                    {
+                        "name": "mel-adem-53-seriennummer",
+                        "type": "text"
+                    },
+                    {
+                        "name": "regenerations-code",
+                        "type": "text"
+                    },
+                    {
+                        "name": "regenerations-cmd-code",
+                        "type": "text"
+                    },
+                    {
+                        "type": "RichText"
+                    },
+                    {
+                        "name": "abweichende-abhol-lieferadresse",
+                        "type": "switch"
+                    },
+                    {
+                        "type": "RichText"
+                    },
+                    {
+                        "type": "RichText"
+                    },
+                    {
+                        "name": "firmenname-abhol",
+                        "type": "text"
+                    },
+                    {
+                        "name": "strassehausnummer-abhol",
+                        "type": "text"
+                    },
+                    {
+                        "name": "adresszusatz-abhol",
+                        "type": "text"
+                    },
+                    {
+                        "name": "plz-abhol",
+                        "type": "text"
+                    },
+                    {
+                        "name": "ort-abhol",
+                        "type": "text"
+                    },
+                    {
+                        "name": "land-abhol",
+                        "type": "select"
+                    },
+                    {
+                        "name": "email-abhol",
+                        "type": "email"
+                    },
+                    {
+                        "name": "telefon-abhol",
+                        "type": "text"
+                    },
+                    {
+                        "type": "Markdown"
+                    },
+                    {
+                        "name": "praxisname-ruecklieferung",
+                        "type": "text"
+                    },
+                    {
+                        "name": "strasse-und-hausnummer-ruecklieferung",
+                        "type": "text"
+                    },
+                    {
+                        "name": "plz-adresszusatz",
+                        "type": "text"
+                    },
+                    {
+                        "name": "plz-ruecklieferung",
+                        "type": "text"
+                    },
+                    {
+                        "name": "ort-ruecklieferung",
+                        "type": "text"
+                    },
+                    {
+                        "name": "land-ruecklieferung",
+                        "type": "select"
+                    },
+                    {
+                        "name": "e-mail-ruecklieferung",
+                        "type": "email"
+                    },
+                    {
+                        "name": "telefon-ruecklieferung",
+                        "type": "text"
+                    },
+                    {
+                        "type": "Markdown"
+                    },
+                    {
+                        "type": "Markdown"
+                    },
+                    {
+                        "name": "wird-eine-transportverpackung-ben-tigt",
+                        "type": "radio"
+                    },
+                    {
+                        "type": "RichText"
+                    },
+                    {
+                        "type": "Markdown"
+                    },
+                    {
+                        "type": "Markdown"
+                    },
+                    {
+                        "name": "abweichende-rechnungsadresse",
+                        "type": "switch"
+                    },
+                    {
+                        "name": "praxisname-firmenname-rechnung",
+                        "type": "text"
+                    },
+                    {
+                        "name": "anrede-rechnung",
+                        "type": "text"
+                    },
+                    {
+                        "name": "vorname-rechnung",
+                        "type": "text"
+                    },
+                    {
+                        "name": "nachname-rechnung",
+                        "type": "text"
+                    },
+                    {
+                        "name": "strasse-hausnummer-rechnung",
+                        "type": "text"
+                    },
+                    {
+                        "name": "adresszusatz-rechnung",
+                        "type": "text"
+                    },
+                    {
+                        "name": "plz-rechnung",
+                        "type": "text"
+                    },
+                    {
+                        "name": "ort-rechnung",
+                        "type": "text"
+                    },
+                    {
+                        "name": "land-rechnung",
+                        "type": "select"
+                    },
+                    {
+                        "name": "e-mail-rechnung",
+                        "type": "text"
+                    },
+                    {
+                        "name": "telefon-rechnung",
+                        "type": "text"
+                    },
+                    {
+                        "type": "Markdown"
+                    },
+                    {
+                        "type": "Markdown"
+                    },
+                    {
+                        "name": "oeffnungszeiten-feld",
+                        "type": "textarea"
+                    },
+                    {
+                        "name": "patrone-abholbereit-ab",
+                        "type": "date"
+                    },
+                    {
+                        "type": "RichText"
+                    },
+                    {
+                        "name": "urlaub-von",
+                        "type": "date"
+                    },
+                    {
+                        "name": "urlaub-bis",
+                        "type": "date"
+                    },
+                    {
+                        "name": "sonstige-anmerkungen",
+                        "type": "textarea"
+                    },
+                    {
+                        "name": "hidden-abregmail",
+                        "type": "hidden"
+                    }
+                ]
+            },
+            "values": [
+                {
+                    "name": "mel-adem-53-seriennummer",
+                    "value": "201853MD1285-2"
+                },
+                {
+                    "name": "regenerations-code",
+                    "value": "989B7A-MD-E8F688"
+                },
+                {
+                    "name": "regenerations-cmd-code",
+                    "value": ""
+                },
+                {
+                    "name": "abweichende-abhol-lieferadresse",
+                    "value": false
+                },
+                {
+                    "name": "firmenname-abhol",
+                    "value": "Dr. Harald Jahn"
+                },
+                {
+                    "name": "strassehausnummer-abhol",
+                    "value": "R.-Breitscheid-Str. 4"
+                },
+                {
+                    "name": "adresszusatz-abhol",
+                    "value": ""
+                },
+                {
+                    "name": "plz-abhol",
+                    "value": "06773"
+                },
+                {
+                    "name": "ort-abhol",
+                    "value": "Gräfenhainichen"
+                },
+                {
+                    "name": "land-abhol",
+                    "value": "Deutschland"
+                },
+                {
+                    "name": "email-abhol",
+                    "value": "kfo-dr-jahn@web.de"
+                },
+                {
+                    "name": "telefon-abhol",
+                    "value": "03495222069"
+                },
+                {
+                    "name": "praxisname-ruecklieferung",
+                    "value": ""
+                },
+                {
+                    "name": "strasse-und-hausnummer-ruecklieferung",
+                    "value": ""
+                },
+                {
+                    "name": "plz-adresszusatz",
+                    "value": ""
+                },
+                {
+                    "name": "plz-ruecklieferung",
+                    "value": ""
+                },
+                {
+                    "name": "ort-ruecklieferung",
+                    "value": ""
+                },
+                {
+                    "name": "land-ruecklieferung",
+                    "value": ""
+                },
+                {
+                    "name": "e-mail-ruecklieferung",
+                    "value": ""
+                },
+                {
+                    "name": "telefon-ruecklieferung",
+                    "value": ""
+                },
+                {
+                    "name": "wird-eine-transportverpackung-ben-tigt",
+                    "value": "NEIN"
+                },
+                {
+                    "name": "abweichende-rechnungsadresse",
+                    "value": false
+                },
+                {
+                    "name": "praxisname-firmenname-rechnung",
+                    "value": ""
+                },
+                {
+                    "name": "anrede-rechnung",
+                    "value": ""
+                },
+                {
+                    "name": "vorname-rechnung",
+                    "value": ""
+                },
+                {
+                    "name": "nachname-rechnung",
+                    "value": ""
+                },
+                {
+                    "name": "strasse-hausnummer-rechnung",
+                    "value": ""
+                },
+                {
+                    "name": "adresszusatz-rechnung",
+                    "value": ""
+                },
+                {
+                    "name": "plz-rechnung",
+                    "value": ""
+                },
+                {
+                    "name": "ort-rechnung",
+                    "value": ""
+                },
+                {
+                    "name": "land-rechnung",
+                    "value": ""
+                },
+                {
+                    "name": "e-mail-rechnung",
+                    "value": ""
+                },
+                {
+                    "name": "telefon-rechnung",
+                    "value": ""
+                },
+                {
+                    "name": "oeffnungszeiten-feld",
+                    "value": "Mo-Do 09-17 Uhr"
+                },
+                {
+                    "name": "patrone-abholbereit-ab",
+                    "value": "2026-05-05"
+                },
+                {
+                    "name": "urlaub-von",
+                    "value": ""
+                },
+                {
+                    "name": "urlaub-bis",
+                    "value": ""
+                },
+                {
+                    "name": "sonstige-anmerkungen",
+                    "value": ""
+                },
+                {
+                    "name": "hidden-abregmail",
+                    "value": "afonin@melag.de"
+                }
+            ]
+        }
+    }
+}

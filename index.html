@@ -437,12 +437,13 @@
         });
       }
 
-      const headerCells = [...headers];
+      const headerCells = headers.map(name => String(name));
       const thead = document.createElement('thead');
       const headerRow = document.createElement('tr');
       headerCells.forEach(name => {
         const th = document.createElement('th');
         th.textContent = name;
+        th.dataset.column = name;
         th.style.cursor = 'pointer';
         th.addEventListener('click', () => sortByColumn(name));
         headerRow.appendChild(th);
@@ -467,6 +468,12 @@
     }
 
     function sortByColumn(column) {
+      if (typeof column !== 'string') {
+        return;
+      }
+      if (!displayHeaders.includes(column)) {
+        return;
+      }
       if (sortColumn === column) {
         sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
       } else {
