@@ -508,12 +508,31 @@
       sendSelectedRow(endpoint);
     });
 
+    function buildPostPayload(row) {
+      const values = Object.keys(row).map(key => {
+        const cleanKey = key.startsWith('data.') ? key.slice(5) : key;
+        return {
+          name: cleanKey,
+          value: normalize(row[key]),
+        };
+      });
+
+      return {
+        version: '1.0',
+        event_type: 'form_submitted',
+        form_response: {
+          form_id: normalize(row.id) || '',
+          session_id: normalize(row.id) ? `${normalize(row.id)}-session` : '',
+          submitted_at: row.created_at ? new Date(row.created_at).toISOString() : new Date().toISOString(),
+          definition: {},
+          values,
+        },
+      };
+    }
+
     function sendSelectedRow(endpoint) {
       postStatusText.style.display = 'none';
-      const payload = {
-        ...selectedRow,
-        created_at_formatted: formatCreatedAt(selectedRow.created_at),
-      };
+      const payload = buildPostPayload(selectedRow);
 
       fetch(endpoint, {
         method: 'POST',
