@@ -318,22 +318,34 @@
     }
 
     function parseCsvFile(file) {
-      return new Promise((resolve, reject) => {
-        Papa.parse(file, {
-          header: true,
-          dynamicTyping: false,
-          skipEmptyLines: true,
-          transformHeader: header => header.trim(),
-          complete: results => {
-            if (results.errors && results.errors.length > 0) {
-              const firstError = results.errors[0];
-              const row = firstError.row === undefined ? '' : ` in Zeile ${firstError.row + 1}`;
-              reject(new Error(`${file.name}: ${firstError.message || 'CSV-Fehler'}${row}`));
-            } else {
-              resolve({ rows: results.data, headers: results.meta.fields || [] });
-            }
-          },
-          error: error => reject(new Error(`${file.name}: ${error.message || 'CSV-Fehler'}`)),
+      return file.text().then(text => {
+        if (!text.includes('"')) {
+          const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).filter(line => line.trim() !== '');
+          const headers = lines.shift().split(',').map(header => header.trim());
+          const rows = lines.map(line => line.split(',').reduce((result, value, index) => {
+            result[headers[index]] = value;
+            return result;
+          }, {}));
+          return { rows, headers };
+        }
+
+        return new Promise((resolve, reject) => {
+          Papa.parse(file, {
+            header: true,
+            dynamicTyping: false,
+            skipEmptyLines: true,
+            transformHeader: header => header.trim(),
+            complete: results => {
+              if (results.errors && results.errors.length > 0) {
+                const firstError = results.errors[0];
+                const row = firstError.row === undefined ? '' : ` in Zeile ${firstError.row + 1}`;
+                reject(new Error(`${file.name}: ${firstError.message || 'CSV-Fehler'}${row}`));
+              } else {
+                resolve({ rows: results.data, headers: results.meta.fields || [] });
+              }
+            },
+            error: error => reject(new Error(`${file.name}: ${error.message || 'CSV-Fehler'}`)),
+          });
         });
       });
     }
