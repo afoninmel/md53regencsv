@@ -4,7 +4,7 @@
   <meta http-equiv="cache-control" content="no-cache">
   <meta http-equiv="pragma" content="no-cache">
   <meta http-equiv="expires" content="0">
-  <title>CSV Comparator</title>
+  <title>Beekai Comparator</title>
   <style>
     body {
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -216,13 +216,13 @@
 </head>
 <body>
   <div class="app">
-    <h1>CSV Vergleich</h1>
-    <p class="lead">Lade die Beekai CSV und die Power Automate CSV hoch. Die Seite vergleicht die beiden und zeigt die Beekai Einträge an, die nicht in der PA CSV vorhanden sind. </p>
+    <h1>Beekai Vergleich</h1>
+    <p class="lead">Lade die Beekai CSV oder Excel-Datei und die Power Automate CSV hoch. Die Seite vergleicht die beiden und zeigt die Beekai Einträge an, die nicht in der PA CSV vorhanden sind. </p>
 
     <div class="upload-grid">
       <div class="upload-box">
-        <label for="beekaiFile">Beekai CSV</label>
-        <input id="beekaiFile" type="file" accept=".csv" />
+        <label for="beekaiFile">Beekai CSV oder Excel</label>
+        <input id="beekaiFile" type="file" accept=".csv,.xls,.xlsx" />
       </div>
       <div class="upload-box">
         <label for="powerFile">Power Automate CSV</label>
@@ -258,6 +258,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <script>
     const beekaiInput = document.getElementById('beekaiFile');
     const powerInput = document.getElementById('powerFile');
@@ -297,7 +298,7 @@
       sortColumn = null;
       sortDirection = 'asc';
 
-      Promise.all([parseCsvFile(beekaiInput.files[0]), parseCsvFile(powerInput.files[0])])
+      Promise.all([parseBeekaiFile(beekaiInput.files[0]), parseCsvFile(powerInput.files[0])])
         .then(([beekai, power]) => {
           beekaiData = beekai;
           powerData = power;
@@ -333,6 +334,68 @@
           error: reject,
         });
       });
+    }
+
+    function parseBeekaiFile(file) {
+      const extension = file.name.split('.').pop().toLowerCase();
+      if (extension === 'csv') {
+        return parseCsvFile(file);
+      }
+      if (extension !== 'xls' && extension !== 'xlsx') {
+        return Promise.reject(new Error('The Beekai file must be a CSV, XLS, or XLSX file.'));
+      }
+
+      return file.arrayBuffer().then(buffer => {
+        const workbook = XLSX.read(buffer, { type: 'array', cellDates: true });
+        const firstSheetName = workbook.SheetNames[0];
+        if (!firstSheetName) {
+          throw new Error('The Excel file does not contain a worksheet.');
+        }
+
+        const sheet = workbook.Sheets[firstSheetName];
+        const matrix = XLSX.utils.sheet_to_json(sheet, {
+          header: 1,
+          defval: '',
+          raw: false,
+          blankrows: false,
+        });
+        if (matrix.length === 0) {
+          throw new Error('The Excel worksheet is empty.');
+        }
+
+        const headers = matrix[0].map(header => String(header).trim());
+        if (headers.length === 0 || headers.every(header => !header)) {
+          throw new Error('The Excel worksheet does not contain a header row.');
+        }
+
+        const normalizedHeaders = headers.map(normalizeBeekaiHeader);
+        const rows = matrix.slice(1)
+          .filter(row => row.some(value => normalize(value) !== ''))
+          .map(row => normalizedHeaders.reduce((result, header, index) => {
+            result[header] = row[index] === undefined ? '' : row[index];
+            return result;
+          }, {}));
+
+        return { rows, headers: normalizedHeaders };
+      });
+    }
+
+    function normalizeBeekaiHeader(header) {
+      const coreHeaders = new Set([
+        'id',
+        'title',
+        'status',
+        'created_at',
+        'updated_at',
+        'completed_at',
+        'full_name',
+        'email',
+        'phone',
+      ]);
+      if (coreHeaders.has(header) || header.startsWith('data.')) {
+        return header;
+      }
+      return `data.${header}`;
     }
 
     function normalize(value) {

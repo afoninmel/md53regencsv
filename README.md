@@ -5,11 +5,15 @@ This repository contains a static browser-based CSV comparison page that can be 
 ## Usage
 
 1. Open `index.html` in a browser.
-2. Upload the Beekai CSV and the Power Automate CSV.
+2. Upload the Beekai CSV or an Excel file (`.xls`/`.xlsx`) and the Power Automate CSV.
 3. Click **Vergleichen**.
 4. The page shows rows from the Beekai CSV that do not match any row in the Power Automate CSV based on at least 2 shared columns having the same values.
 
 > All processing happens in the browser. No files are uploaded to a server, and reloading the page clears all data.
+
+Excel files are read from the first worksheet. Their form-field headers are automatically
+converted from the Excel convention (for example `mel-adem-53-seriennummer`) to the CSV
+convention (`data.mel-adem-53-seriennummer`) before comparison and POST generation.
 
 ## GitHub Pages
 
