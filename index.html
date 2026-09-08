@@ -305,7 +305,7 @@
           compareCsvs();
         })
         .catch(error => {
-          showMessage('Error parsing one of the files: ' + error.message, true);
+          showMessage('Fehler beim Einlesen: ' + error.message, true);
         });
     });
 
@@ -326,26 +326,34 @@
           transformHeader: header => header.trim(),
           complete: results => {
             if (results.errors && results.errors.length > 0) {
-              reject(new Error(results.errors[0].message || 'CSV parse error'));
+              const firstError = results.errors[0];
+              const row = firstError.row === undefined ? '' : ` in Zeile ${firstError.row + 1}`;
+              reject(new Error(`${file.name}: ${firstError.message || 'CSV-Fehler'}${row}`));
             } else {
               resolve({ rows: results.data, headers: results.meta.fields || [] });
             }
           },
-          error: reject,
+          error: error => reject(new Error(`${file.name}: ${error.message || 'CSV-Fehler'}`)),
         });
       });
     }
 
-    function parseBeekaiFile(file) {
+    async function parseBeekaiFile(file) {
       const extension = file.name.split('.').pop().toLowerCase();
-      if (extension === 'csv') {
+      const fileType = (file.type || '').toLowerCase();
+      const header = new Uint8Array(await file.slice(0, 4).arrayBuffer());
+      const isZipBasedExcel = header[0] === 0x50 && header[1] === 0x4b;
+      const isExcel = extension === 'xls' || extension === 'xlsx'
+        || fileType.includes('spreadsheet')
+        || fileType.includes('excel')
+        || isZipBasedExcel;
+
+      if (!isExcel) {
         return parseCsvFile(file);
       }
-      if (extension !== 'xls' && extension !== 'xlsx') {
-        return Promise.reject(new Error('The Beekai file must be a CSV, XLS, or XLSX file.'));
-      }
 
-      return file.arrayBuffer().then(buffer => {
+      try {
+        const buffer = await file.arrayBuffer();
         const workbook = XLSX.read(buffer, { type: 'array', cellDates: true });
         const firstSheetName = workbook.SheetNames[0];
         if (!firstSheetName) {
@@ -377,7 +385,9 @@
           }, {}));
 
         return { rows, headers: normalizedHeaders };
-      });
+      } catch (error) {
+        throw new Error(`${file.name}: ${error.message || 'Excel-Datei konnte nicht gelesen werden.'}`);
+      }
     }
 
     function normalizeBeekaiHeader(header) {
